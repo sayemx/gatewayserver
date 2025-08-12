@@ -2,6 +2,10 @@
 logging:
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){yellow} %clr(%-5level){blue} %clr([%thread]){magenta} %clr(%logger{36}){cyan} - %msg%n"
+  level:
+     com:
+        sayem:
+           gateway: DEBUG
  
 
 spring:
@@ -13,7 +17,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
+          enabled: false
           lower-case-service-id: true
     
 build:
