@@ -2,6 +2,7 @@
 logging:
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){yellow} %clr(%-5level){blue} %clr([%thread]){magenta} %clr(%logger{36}){cyan} - %msg%n"
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
   level:
      com:
         sayem:
@@ -21,7 +22,7 @@ spring:
           lower-case-service-id: true
       httpclient:
         connect-timeout: 1000
-        response-timeout: 5s
+        response-timeout: 10s
      
      
 build:
@@ -39,6 +40,9 @@ management:
   info:
     env:
       enabled: true
+  metrics:
+    tags:
+      applications: ${spring.application.name}
       
    
 info:
