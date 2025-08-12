@@ -1,5 +1,6 @@
 package com.sayem.gateway;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.springframework.boot.SpringApplication;
@@ -7,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 
 @SpringBootApplication
 public class GatewayServerApplication {
@@ -24,6 +26,8 @@ public class GatewayServerApplication {
 						.filters(f -> f
 								.rewritePath("/sayem/accounts/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.circuitBreaker(config -> config.setName("accountsCircuitBreaker")
+										.setFallbackUri("forward:/contactSupport"))
 								)
 						.uri("lb://ACCOUNTS"))
 				.route(p -> p
@@ -31,6 +35,9 @@ public class GatewayServerApplication {
 						.filters(f -> f
 								.rewritePath("/sayem/loans/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.retry(config -> config.setRetries(3)
+										.setMethods(HttpMethod.GET)
+										.setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, true))
 								)
 						.uri("lb://LOANS"))
 				.route(p -> p
